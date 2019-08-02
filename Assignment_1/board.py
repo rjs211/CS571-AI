@@ -4,6 +4,15 @@ import copy
 import heapq
 import sys
 import time
+import matplotlib
+import matplotlib.pyplot as plt
+
+totExp = ['Total # States Expanded']
+optStLen = ['# States in Optimal Path']
+optPath = ['Optimal Path Actions']
+optCost = ['Optimal Cost']
+execTime = ['Execution Time']
+
 
 @functools.total_ordering
 class puzBoard:
@@ -96,6 +105,24 @@ class puzBoard:
                 for pt in pli:
                     print(pt)
                 break
+        actList = []
+        for i in range(len(pli)-1):
+            f1 = np.where(pli[i].state == 0)
+            f2 = np.where(pli[i+1].state == 0)
+            if f1[0][0] == f2[0][0]:
+                if f1[1][0] > f2[1][0]: #right
+                    actList.append('R')
+                else:
+                    actList.append('L')
+            else:
+                if f1[0][0] > f2[0][0]: # Down
+                    actList.append('D')
+                else:
+                    actList.append('U')
+        retf = ''.join(actList)
+        print('Actions Taken: ',retf)
+        return retf
+
 
 
 
@@ -153,6 +180,15 @@ class puzBoard:
     def h4(cls,st):
         return 362880 # 9! factorial(9)
 
+    @classmethod
+    def resetLists(cls):
+        cls.hFunct = None
+        cls.finState = np.zeros((3, 3), dtype=np.int8)
+        cls.finStateBytes = np.zeros((3, 3), dtype=np.int8).tobytes()
+        cls.opList = []
+        cls.opListDict = {}
+        cls.clListDict = {}
+
 
 def AStar(strt, heur):
     heurOptions = {0:(puzBoard.h1,'All Zeros'),
@@ -183,8 +219,12 @@ def AStar(strt, heur):
             end_time = time.time()
             print('Success.  Optimal Path of {} length found after exploring {} number of Elements'.format(cn.g,
                                                                                                            len(puzBoard.clListDict)) )
+            totExp.append(len(puzBoard.clListDict))
+            optStLen.append(cn.g+1)
+            optPath.append(cn.printPath())
+            optCost.append(cn.g)
             # print(cn)
-            cn.printPath()
+            # cn.printPath()
             break
         cnChildren = cn.getChildren()
         for ns in cnChildren:
@@ -195,12 +235,27 @@ def AStar(strt, heur):
         if len(puzBoard.opList) == 0:
             end_time = time.time()
             print('Failure :(  Explored {} States'.format(len(puzBoard.clListDict)))
+            totExp.append(len(puzBoard.clListDict))
+            optStLen.append(float('nan'))
+            optPath.append(float('nan'))
+            optCost.append(float('nan'))
             break
 
     print('Total Execution Time: {} sec'.format(end_time-start_time))
+    execTime.append(float(end_time-start_time))
 
+def myPlot(vaList,filename,yLabel):
+    plt.xticks([1,2,3,4],['h1:AllZero','h2: #Displaced','h3: Manhattan', 'h4: 9 Fac'])
+    plt.plot([1,2,3,4],vaList[1:])
+    plt.xlabel('Heurestics')
+    plt.ylabel(yLabel)
+    plt.savefig(filename)
+    plt.clf()
 
 if __name__ == '__main__':
+    if len(sys.argv) == 0:
+        print('Give Input file as commandline arguement')
+        exit()
     fname = sys.argv[1] # commandline arguement : path to input file
 
     with open(fname,'r') as f:
@@ -217,5 +272,30 @@ if __name__ == '__main__':
         a = a[:3]
         strt[p] += a
         p += 1
+    for i in range(4):
+        puzBoard.resetLists()
+        AStar(strt,i)
 
-    AStar(strt,0)
+
+    with open('Table.csv','a') as f:
+        f.write('Heurestic:, All Zeros, # Displaced, Manhattan Distance, 9 Factorial\n')
+        f.write('%s, %0.4f, %0.4f, %0.4f, %0.4f\n'%(*totExp,))
+        f.write('%s, %0.4f, %0.4f, %0.4f, %0.4f\n'%(*optStLen,))
+        f.write('%s, %s, %s, %s, %s\n'%(*optPath,))
+        f.write('%s, %0.4f, %0.4f, %0.4f, %0.4f\n'%(*optCost,))
+        f.write('%s, %0.4f, %0.4f, %0.4f, %0.4f\n'%(*execTime,))
+
+    myPlot(totExp, 'ExploredStates.png',"# expanded States")
+    myPlot(execTime, 'ExecutionTime.png','Time in Seconds')
+
+        
+
+        # f.write('{}, {0:0.4f}, {0:0.4f}, {0:0.4f}, {0:0.4f}\n'.format(*totExp))
+        # f.write('{}, {0:0.4f}, {0:0.4f}, {0:0.4f}, {0:0.4f}\n'.format(*optStLen))
+        # f.write('{}, {0:0.4f}, {0:0.4f}, {0:0.4f}, {0:0.4f}\n'.format(*optPath))
+        # f.write('{}, {0:0.4f}, {0:0.4f}, {0:0.4f}, {0:0.4f}\n'.format(*optCost))
+        # f.write('{}, {0:0.4f}, {0:0.4f}, {0:0.4f}, {0:0.4f}\n'.format(*execTime))
+
+
+
+

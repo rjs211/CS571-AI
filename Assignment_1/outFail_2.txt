@@ -1,0 +1,19 @@
+Using heurestic:Manhattan Distance
+Start State: 
+T6  | T7  | T3 
+T8  | T4  | T2 
+T1  |  B  | T5 
+G = 0 | H = 16 | F  = 16
+================================================================================
+
+
+Goal State: 
+T1  | T2  | T3 
+T4  | T5  | T6 
+T7  | T8  |  B 
+G = 0 | H = 0 | F  = 0
+================================================================================
+
+
+Failure :(  Explored 181440 States
+Total Execution Time: 312.9517071247101 sec
