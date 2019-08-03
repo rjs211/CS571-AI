@@ -7,6 +7,7 @@ import time
 import matplotlib.pyplot as plt
 
 
+# Initial lists.
 total_expanded_states = ['Total # States Expanded']
 optimal_path_length = ['# States in Optimal Path']
 optimal_path = ['Optimal Path Actions']
@@ -16,7 +17,9 @@ execution_time = ['Execution Time']
 
 @functools.total_ordering
 class PuzzleBoard:
-
+    """
+    Class for emulating the search space for the A* algorithm.
+    """
     heuristic_function = None
     final_state = numpy.zeros((3, 3), dtype = numpy.int8)
     final_state_bytes = numpy.zeros((3, 3), dtype = numpy.int8).tobytes()
@@ -29,6 +32,9 @@ class PuzzleBoard:
     decoding[0] = 'B'
 
     def __init__(self, g, parent, state = numpy.zeros((3, 3), dtype = numpy.int8)):
+        """
+        Function for initialising the PuzzleBoard class.
+        """
         self.state = state
         self.g = g
         self.h = PuzzleBoard.heuristic_function(self.state)
@@ -39,117 +45,142 @@ class PuzzleBoard:
         self.state_bytes = self.state.tobytes()
 
     def get_blank_position(self):
+        """
+        Function for obtaining the blank position from the state.
+        """
         b = numpy.where(self.state == 0)
         c = [b[0][0], b[1][0]]
         self.blank_position = c
 
     def __lt__(self, other):
+        """
+        Function for overloading the less than operator.
+        """
         if self.f != other.f:
             return self.f < other.f
         else:
             return id(self) < id(other)
 
     def __eq__(self, other):
+        """
+        Function for overloading the equality operator.
+        """
         return  id(self) == id(other)
 
     def get_children(self):
-        li = []
+        """
+        Function for getting the child states from the current state.
+        """
+        current_list = []
 
-        if self.blank_position[0] != 0: # can go up
+        # Check for upward movement.
+        if self.blank_position[0] != 0:
             new_state = copy.copy(self.state)
             new_state[self.blank_position[0]][self.blank_position[1]] = new_state[self.blank_position[0] - 1][self.blank_position[1]]
             new_state[self.blank_position[0] - 1][self.blank_position[1]] = 0
             nu = PuzzleBoard(self.g + 1, self, new_state)
-            li.append(nu)
+            current_list.append(nu)
 
-        if self.blank_position[0] != 2: # can go down
+        # Check for downward movement.
+        if self.blank_position[0] != 2:
             new_state = copy.copy(self.state)
             new_state[self.blank_position[0]][self.blank_position[1]] = new_state[self.blank_position[0] + 1][self.blank_position[1]]
             new_state[self.blank_position[0] + 1][self.blank_position[1]] = 0
             nu = PuzzleBoard(self.g + 1, self, new_state)
-            li.append(nu)
+            current_list.append(nu)
 
-        if self.blank_position[1] != 2:  # can go right
+        # Check for right movement.
+        if self.blank_position[1] != 2:
             new_state = copy.copy(self.state)
             new_state[self.blank_position[0]][self.blank_position[1]] = new_state[self.blank_position[0]][self.blank_position[1] + 1]
             new_state[self.blank_position[0]][self.blank_position[1] + 1] = 0
             nu = PuzzleBoard(self.g + 1, self, new_state)
-            li.append(nu)
+            current_list.append(nu)
 
-        if self.blank_position[1] != 0:  # can go left
+        # Check for left movement.
+        if self.blank_position[1] != 0:
             new_state = copy.copy(self.state)
             new_state[self.blank_position[0]][self.blank_position[1]] = new_state[self.blank_position[0]][self.blank_position[1] - 1]
             new_state[self.blank_position[0]][self.blank_position[1] - 1] = 0
             nu = PuzzleBoard(self.g + 1, self, new_state)
-            li.append(nu)
+            current_list.append(nu)
 
-        return li
+        return current_list
 
     def __str__(self):
-        rets = '\n'
-        li = []
+        """
+        Function for converting the current state to string format.
+        """
+        return_string = '\n'
+        current_list = []
 
         for i in self.state:
-            li.append('{:^3s} | {:^3s} | {:^3s}'.format(*[PuzzleBoard.decoding[j] for j in i]))
+            current_list.append('{:^3s} | {:^3s} | {:^3s}'.format(*[PuzzleBoard.decoding[j] for j in i]))
 
-        li.append("G = {} | H = {} | F  = {}".format(self.g, self.h, self.f))
-        li.append('=' * 80)
-        li.append('\n')
+        current_list.append("G = {} | H = {} | F  = {}".format(self.g, self.h, self.f))
+        current_list.append('=' * 80)
+        current_list.append('\n')
 
-        return rets.join(li)
+        return return_string.join(current_list)
 
     def print_path(self):
-        pli = []
+        """
+        Function for printing the optimal path explored.
+        """
+        path_list = []
         m = self
 
         while True:
-            pli.append(m)
+            path_list.append(m)
             m = m.parent
 
             if m is None:
-                pli.reverse()
-                print('Totally {} States In Optimal Path.'.format(len(pli)))
+                path_list.reverse()
+                print('Totally {} States In Optimal Path.'.format(len(path_list)))
 
-                for pt in pli:
-                    print(pt)
+                for path in path_list:
+                    print(path)
 
                 break
 
-        actList = []
+        action_list = []
 
-        for i in range(len(pli) - 1):
-            f1 = numpy.where(pli[i].state == 0)
-            f2 = numpy.where(pli[i + 1].state == 0)
+        for i in range(len(path_list) - 1):
+            f1 = numpy.where(path_list[i].state == 0)
+            f2 = numpy.where(path_list[i + 1].state == 0)
 
             if f1[0][0] == f2[0][0]:
                 if f1[1][0] > f2[1][0]: #right
-                    actList.append('R')
+                    action_list.append('R')
                 else:
-                    actList.append('L')
+                    action_list.append('L')
             else:
                 if f1[0][0] > f2[0][0]: # Down
-                    actList.append('D')
+                    action_list.append('D')
                 else:
-                    actList.append('U')
+                    action_list.append('U')
 
-        retf = ''.join(actList)
+        retf = ''.join(action_list)
         print('Actions Taken: ', retf)
         return retf
 
     @staticmethod
-    def add_new_to_list(new_state): # add new elements to list
+    def add_to_open_list(new_state):
+        """
+        Function for adding new states to the open list.
+        """
         new_state_bytes = new_state.state_bytes
-        oldState = PuzzleBoard.closed_list_dict.get(new_state_bytes, None)
+        old_state = PuzzleBoard.closed_list_dict.get(new_state_bytes, None)
 
-        if oldState is None: # not present in closedList
-            oldState = PuzzleBoard.open_list_dict.get(new_state_bytes, None)
+        if old_state is None: # not present in closedList
+            old_state = PuzzleBoard.open_list_dict.get(new_state_bytes, None)
 
-            if oldState is None: # not present in openlist
+            if old_state is None: # not present in openlist
                 heapq.heappush(PuzzleBoard.open_list, new_state)
                 PuzzleBoard.open_list_dict[new_state_bytes] = new_state
             else: # present in openlist
-                if oldState.f > new_state.f:
-                    PuzzleBoard.open_list.remove(oldState)
+                if old_state.f > new_state.f:
+                    PuzzleBoard.open_list.remove(old_state)
                     PuzzleBoard.open_list.append(new_state)
                     heapq.heapify(PuzzleBoard.open_list)
                     del PuzzleBoard.open_list_dict[new_state_bytes]
@@ -157,20 +188,32 @@ class PuzzleBoard:
 
     @staticmethod
     def add_to_closed_list(new_state):
+        """
+        Function for adding new states to the closed list.
+        """
         new_state_bytes = new_state.state_bytes
         PuzzleBoard.closed_list_dict[new_state_bytes] = new_state
 
     @classmethod
     def h1(cls, state):
+        """
+        Function for all zero heuristic.
+        """
         return 0
 
     @classmethod
     def h2(cls, state):
+        """
+        Function for displaced tiles heuristic.
+        """
         d = (numpy.equal(state, cls.final_state) * 1).sum()
         return 9 - d
 
     @classmethod
     def h3(cls, state):
+        """
+        Function for Manhattan Distance heuristic.
+        """
         ans = 0
 
         for i in range(3):
@@ -183,11 +226,16 @@ class PuzzleBoard:
 
     @classmethod
     def h4(cls, state):
-        # 9! = factorial(9)
+        """
+        Function for factorial of 9 heuristic.
+        """
         return 362880
 
     @classmethod
     def reset_lists(cls):
+        """
+        Function for resetting all the lists.
+        """
         cls.heuristic_function = None
         cls.final_state = numpy.zeros((3, 3), dtype = numpy.int8)
         cls.final_state_bytes = numpy.zeros((3, 3), dtype = numpy.int8).tobytes()
@@ -197,6 +245,9 @@ class PuzzleBoard:
 
 
 def AStar(start, heuristic):
+    """
+    Function for running the A* algorithm given the heuristics.
+    """
     heuristic_options = {0 : (PuzzleBoard.h1, 'All Zeroes'),
                          1 : (PuzzleBoard.h2, '# Tiles Displaced'),
                          2 : (PuzzleBoard.h3, 'Manhattan Distance'),
@@ -206,7 +257,7 @@ def AStar(start, heuristic):
     PuzzleBoard.heuristic_function = heuristic_options[heuristic][0]
 
     s = PuzzleBoard(0, None, start[: 3])
-    PuzzleBoard.add_new_to_list(s)
+    PuzzleBoard.add_to_open_list(s)
     print('Using Heuristic: {}\nStart State: '.format(heuristic_options[heuristic][1]))
     print(s)
 
@@ -232,7 +283,7 @@ def AStar(start, heuristic):
         current_children = current.get_children()
 
         for new_state in current_children:
-            PuzzleBoard.add_new_to_list(new_state)
+            PuzzleBoard.add_to_open_list(new_state)
 
         if len(PuzzleBoard.open_list) == 0:
             end_time = time.time()
@@ -247,12 +298,15 @@ def AStar(start, heuristic):
     execution_time.append(float(end_time - start_time))
 
 
-def my_plot(vaList, filename, yLabel):
+def my_plot(values, filename, y_label):
+    """
+    Function for plotting the number of explored states and time graphs.
+    """
     plt.xticks([1, 2, 3, 4], ['h1: All Zeroes', 'h2: Tiles Displaced',
                               'h3: Manhattan Distance', 'h4: 9 Factorial'])
-    plt.plot([1, 2, 3, 4], vaList[1 :])
+    plt.plot([1, 2, 3, 4], values[1 :])
     plt.xlabel('Heuristics')
-    plt.ylabel(yLabel)
+    plt.ylabel(y_label)
     plt.savefig(filename, bbox_inches = 'tight')
     plt.clf()
 
@@ -266,13 +320,13 @@ if __name__ == '__main__':
     fname = sys.argv[1]
 
     with open(fname,'r') as f:
-        inp = f.readlines()
+        input_lines = f.readlines()
 
     start = numpy.zeros((6, 3), dtype = numpy.int8)
     p = 0
 
-    for lin in inp:
-        a = lin.strip().split(' ')
+    for line in input_lines:
+        a = line.strip().split(' ')
 
         if len(a) == 0:
             continue
