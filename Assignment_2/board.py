@@ -14,6 +14,8 @@ optimal_path = ['Optimal Path Actions']
 optimal_cost = ['Optimal Cost']
 execution_time = ['Execution Time']
 
+all_expanded_states = ['All expanded states']
+is_monotone = ['Monotonicity']
 
 @functools.total_ordering
 class PuzzleBoard:
@@ -72,6 +74,7 @@ class PuzzleBoard:
         Function for getting the child states from the current state.
         """
         current_list = []
+        current_monotone = True
 
         # Check for upward movement.
         if self.blank_position[0] != 0:
@@ -80,6 +83,8 @@ class PuzzleBoard:
             new_state[self.blank_position[0] - 1][self.blank_position[1]] = 0
             nu = PuzzleBoard(self.g + 1, self, new_state)
             current_list.append(nu)
+            if self.h - nu.h > 1:
+                current_monotone = False
 
         # Check for downward movement.
         if self.blank_position[0] != 2:
@@ -88,6 +93,8 @@ class PuzzleBoard:
             new_state[self.blank_position[0] + 1][self.blank_position[1]] = 0
             nu = PuzzleBoard(self.g + 1, self, new_state)
             current_list.append(nu)
+            if self.h - nu.h > 1:
+                current_monotone = False
 
         # Check for right movement.
         if self.blank_position[1] != 2:
@@ -96,6 +103,8 @@ class PuzzleBoard:
             new_state[self.blank_position[0]][self.blank_position[1] + 1] = 0
             nu = PuzzleBoard(self.g + 1, self, new_state)
             current_list.append(nu)
+            if self.h - nu.h > 1:
+                current_monotone = False
 
         # Check for left movement.
         if self.blank_position[1] != 0:
@@ -104,8 +113,10 @@ class PuzzleBoard:
             new_state[self.blank_position[0]][self.blank_position[1] - 1] = 0
             nu = PuzzleBoard(self.g + 1, self, new_state)
             current_list.append(nu)
+            if self.h - nu.h > 1:
+                current_monotone = False
 
-        return current_list
+        return current_list, current_monotone
 
     def __str__(self):
         """
@@ -230,7 +241,7 @@ class PuzzleBoard:
 
         for i in range(3):
             for j in range(3):
-                if cls.final_state[0][0] == 0:
+                if cls.final_state[i][j] == 0:
                     pass
                 c = numpy.where(state == cls.final_state[i][j])
                 ans += abs(c[0] - i)
@@ -247,7 +258,7 @@ class PuzzleBoard:
 
         for i in range(3):
             for j in range(3):
-                if cls.final_state[0][0] == 0:
+                if cls.final_state[i][j] == 0:
                     continue
                 c = numpy.where(state == cls.final_state[i][j])
                 ans += abs(c[0] - i)
@@ -298,6 +309,7 @@ def AStar(start, heuristic):
     print(PuzzleBoard(0, None, start[3 :]))
     start_time = time.time()
     end_time = None
+    heuristic_monotone = True
 
     while True:
         current = heapq.heappop(PuzzleBoard.open_list)
@@ -308,12 +320,14 @@ def AStar(start, heuristic):
             end_time = time.time()
             print('Success. Optimal Path of {} Length Found After Exploring {} Elements'.format(current.g, len(PuzzleBoard.closed_list_dict)))
             total_expanded_states.append(len(PuzzleBoard.closed_list_dict))
+            all_expanded_states.append(PuzzleBoard.closed_list_dict.keys())
             optimal_path_length.append(current.g + 1)
             optimal_path.append(current.print_path())
             optimal_cost.append(current.g)
             break
 
-        current_children = current.get_children()
+        current_children, current_monotone = current.get_children()
+        heuristic_monotone = heuristic_monotone and current_monotone
 
         for new_state in current_children:
             PuzzleBoard.add_to_open_list(new_state)
@@ -322,6 +336,7 @@ def AStar(start, heuristic):
             end_time = time.time()
             print('Failure :(  Explored {} States.'.format(len(PuzzleBoard.closed_list_dict)))
             total_expanded_states.append(len(PuzzleBoard.closed_list_dict))
+            all_expanded_states.append(PuzzleBoard.closed_list_dict.keys())
             optimal_path_length.append(float('nan'))
             optimal_path.append(float('nan'))
             optimal_cost.append(float('nan'))
@@ -329,6 +344,7 @@ def AStar(start, heuristic):
 
     print('Total Execution Time: {} seconds'.format(end_time - start_time))
     execution_time.append(float(end_time - start_time))
+    is_monotone.append(heuristic_monotone)
 
 
 def my_plot(values, filename, y_label):
@@ -347,12 +363,13 @@ def my_plot(values, filename, y_label):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 0:
-        print('Please provide input file as command-line argument.')
-        exit()
-
-    # Command-line argument: Path to input file.
-    fname = sys.argv[1]
+    if len(sys.argv) == 1:
+        # print('Please provide input file as command-line argument.')
+        # exit()cd
+        fname = './Assignment_2/inp.txt'
+    else:
+        # Command-line argument: Path to input file.
+        fname = sys.argv[1]
 
     with open(fname,'r') as f:
         input_lines = f.readlines()
@@ -375,12 +392,22 @@ if __name__ == '__main__':
         AStar(start, i)
 
     with open('Table.csv', 'a') as f:
-        f.write('Heuristic:, All Zeroes, # Tiles Displaced, Manhattan Distance, 9 Factorial, Tiles Displaced - no blank, Manhattan - no blank\n')
+        f.write('Heuristic:, All Zeroes, # Tiles Displaced - counting blank, Manhattan Distance - counting blank, 9 Factorial, Tiles Displaced - no blank, Manhattan - no blank\n')
         f.write('%s, %0.4f, %0.4f, %0.4f, %0.4f, %0.4f, %0.4f\n' % (*total_expanded_states, ))
         f.write('%s, %0.4f, %0.4f, %0.4f, %0.4f, %0.4f, %0.4f\n' % (*optimal_path_length, ))
         f.write('%s, %s, %s, %s, %s, %s, %s\n' % (*optimal_path, ))
         f.write('%s, %0.4f, %0.4f, %0.4f, %0.4f, %0.4f, %0.4f\n' % (*optimal_cost, ))
         f.write('%s, %0.4f, %0.4f, %0.4f, %0.4f, %0.4f, %0.4f\n' % (*execution_time, ))
+        f.write('%s, %s, %s, %s, %s, %s, %s\n' % (*is_monotone, ))
 
     my_plot(total_expanded_states, 'ExploredStates.png', 'Number of Expanded States')
     my_plot(execution_time, 'ExecutionTime.png', 'Time (seconds)')
+
+    # Comparing states explored by better heuristics
+    to_compare = [(1, 5), (1, 6), (5, 6)]
+    heuristic_names = 'Heuristic:, All Zeroes, # Tiles Displaced - counting blank, Manhattan Distance - counting blank, 9 Factorial, Tiles Displaced - no blank, Manhattan - no blank'.split(', ')
+    for worse_h, better_h in to_compare:
+        if not (set(all_expanded_states[better_h]) - set(all_expanded_states[worse_h])):
+            print("'{}' expanded all the states expanded by '{}'".format(heuristic_names[worse_h], heuristic_names[better_h]))
+        else:
+            print("'{}' did not expand all the states expanded by '{}'".format(heuristic_names[worse_h], heuristic_names[better_h]))

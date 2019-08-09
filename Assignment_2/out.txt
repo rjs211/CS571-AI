@@ -15,7 +15,7 @@ G = 0 | H = 0 | F  = 0
 ================================================================================
 
 
-Success. Optimal Path of 23 Length Found After Exploring 114075 Elements
+Success. Optimal Path of 23 Length Found After Exploring 114184 Elements
 Totally 24 States In Optimal Path.
 T7  | T3  | T4 
  B  | T1  | T8 
@@ -186,7 +186,7 @@ G = 23 | H = 0 | F  = 23
 
 
 Actions Taken:  LULDRDLURRDLUURDDLLURUL
-Total Execution Time: 4.962528705596924 seconds
+Total Execution Time: 5.46694016456604 seconds
 Using Heuristic: # Tiles Displaced
 Start State: 
 T7  | T3  | T4 
@@ -204,7 +204,7 @@ G = 0 | H = 0 | F  = 0
 ================================================================================
 
 
-Success. Optimal Path of 23 Length Found After Exploring 13821 Elements
+Success. Optimal Path of 23 Length Found After Exploring 13773 Elements
 Totally 24 States In Optimal Path.
 T7  | T3  | T4 
  B  | T1  | T8 
@@ -375,7 +375,7 @@ G = 23 | H = 0 | F  = 23
 
 
 Actions Taken:  LULDRDLURRDLUURDDLLURUL
-Total Execution Time: 1.8856027126312256 seconds
+Total Execution Time: 1.7904210090637207 seconds
 Using Heuristic: Manhattan Distance
 Start State: 
 T7  | T3  | T4 
@@ -393,7 +393,7 @@ G = 0 | H = 0 | F  = 0
 ================================================================================
 
 
-Success. Optimal Path of 23 Length Found After Exploring 2535 Elements
+Success. Optimal Path of 23 Length Found After Exploring 1798 Elements
 Totally 24 States In Optimal Path.
 T7  | T3  | T4 
  B  | T1  | T8 
@@ -564,7 +564,7 @@ G = 23 | H = 0 | F  = 23
 
 
 Actions Taken:  LULDRDLURRDLUURDDLLURUL
-Total Execution Time: 0.6256558895111084 seconds
+Total Execution Time: 0.4240257740020752 seconds
 Using Heuristic: 9 Factorial
 Start State: 
 T7  | T3  | T4 
@@ -582,7 +582,7 @@ G = 0 | H = 362880 | F  = 362880
 ================================================================================
 
 
-Success. Optimal Path of 23 Length Found After Exploring 103611 Elements
+Success. Optimal Path of 23 Length Found After Exploring 111685 Elements
 Totally 24 States In Optimal Path.
 T7  | T3  | T4 
  B  | T1  | T8 
@@ -753,7 +753,7 @@ G = 23 | H = 362880 | F  = 362903
 
 
 Actions Taken:  LULDRDLURRDLUURDDLLURUL
-Total Execution Time: 4.522799253463745 seconds
+Total Execution Time: 5.11008882522583 seconds
 Using Heuristic: # Tiles Displaced - no blank
 Start State: 
 T7  | T3  | T4 
@@ -771,7 +771,7 @@ G = 0 | H = 0 | F  = 0
 ================================================================================
 
 
-Success. Optimal Path of 23 Length Found After Exploring 12621 Elements
+Success. Optimal Path of 23 Length Found After Exploring 12661 Elements
 Totally 24 States In Optimal Path.
 T7  | T3  | T4 
  B  | T1  | T8 
@@ -942,13 +942,13 @@ G = 23 | H = 0 | F  = 23
 
 
 Actions Taken:  LULDRDLURRDLUURDDLLURUL
-Total Execution Time: 1.6501450538635254 seconds
+Total Execution Time: 1.7077140808105469 seconds
 Using Heuristic: Manhattan Distance - no blank
 Start State: 
 T7  | T3  | T4 
  B  | T1  | T8 
 T5  | T2  | T6 
-G = 0 | H = 18 | F  = 18
+G = 0 | H = 15 | F  = 15
 ================================================================================
 
 
@@ -960,26 +960,26 @@ G = 0 | H = 0 | F  = 0
 ================================================================================
 
 
-Success. Optimal Path of 23 Length Found After Exploring 2279 Elements
+Success. Optimal Path of 23 Length Found After Exploring 1227 Elements
 Totally 24 States In Optimal Path.
 T7  | T3  | T4 
  B  | T1  | T8 
 T5  | T2  | T6 
-G = 0 | H = 18 | F  = 18
+G = 0 | H = 15 | F  = 15
 ================================================================================
 
 
 T7  | T3  | T4 
 T1  |  B  | T8 
 T5  | T2  | T6 
-G = 1 | H = 16 | F  = 17
+G = 1 | H = 14 | F  = 15
 ================================================================================
 
 
 T7  | T3  | T4 
 T1  | T2  | T8 
 T5  |  B  | T6 
-G = 2 | H = 14 | F  = 16
+G = 2 | H = 13 | F  = 15
 ================================================================================
 
 
@@ -993,133 +993,133 @@ G = 3 | H = 14 | F  = 17
 T7  | T3  | T4 
 T1  | T2  |  B 
 T5  | T6  | T8 
-G = 4 | H = 14 | F  = 18
+G = 4 | H = 13 | F  = 17
 ================================================================================
 
 
 T7  | T3  | T4 
 T1  |  B  | T2 
 T5  | T6  | T8 
-G = 5 | H = 16 | F  = 21
+G = 5 | H = 14 | F  = 19
 ================================================================================
 
 
 T7  |  B  | T4 
 T1  | T3  | T2 
 T5  | T6  | T8 
-G = 6 | H = 18 | F  = 24
+G = 6 | H = 15 | F  = 21
 ================================================================================
 
 
 T7  | T4  |  B 
 T1  | T3  | T2 
 T5  | T6  | T8 
-G = 7 | H = 16 | F  = 23
+G = 7 | H = 14 | F  = 21
 ================================================================================
 
 
 T7  | T4  | T2 
 T1  | T3  |  B 
 T5  | T6  | T8 
-G = 8 | H = 14 | F  = 22
+G = 8 | H = 13 | F  = 21
 ================================================================================
 
 
 T7  | T4  | T2 
 T1  |  B  | T3 
 T5  | T6  | T8 
-G = 9 | H = 14 | F  = 23
+G = 9 | H = 12 | F  = 21
 ================================================================================
 
 
 T7  | T4  | T2 
  B  | T1  | T3 
 T5  | T6  | T8 
-G = 10 | H = 16 | F  = 26
+G = 10 | H = 13 | F  = 23
 ================================================================================
 
 
  B  | T4  | T2 
 T7  | T1  | T3 
 T5  | T6  | T8 
-G = 11 | H = 16 | F  = 27
+G = 11 | H = 12 | F  = 23
 ================================================================================
 
 
 T4  |  B  | T2 
 T7  | T1  | T3 
 T5  | T6  | T8 
-G = 12 | H = 14 | F  = 26
+G = 12 | H = 11 | F  = 23
 ================================================================================
 
 
 T4  | T1  | T2 
 T7  |  B  | T3 
 T5  | T6  | T8 
-G = 13 | H = 12 | F  = 25
+G = 13 | H = 10 | F  = 23
 ================================================================================
 
 
 T4  | T1  | T2 
 T7  | T6  | T3 
 T5  |  B  | T8 
-G = 14 | H = 10 | F  = 24
+G = 14 | H = 9 | F  = 23
 ================================================================================
 
 
 T4  | T1  | T2 
 T7  | T6  | T3 
  B  | T5  | T8 
-G = 15 | H = 10 | F  = 25
+G = 15 | H = 8 | F  = 23
 ================================================================================
 
 
 T4  | T1  | T2 
  B  | T6  | T3 
 T7  | T5  | T8 
-G = 16 | H = 10 | F  = 26
+G = 16 | H = 7 | F  = 23
 ================================================================================
 
 
  B  | T1  | T2 
 T4  | T6  | T3 
 T7  | T5  | T8 
-G = 17 | H = 10 | F  = 27
+G = 17 | H = 6 | F  = 23
 ================================================================================
 
 
 T1  |  B  | T2 
 T4  | T6  | T3 
 T7  | T5  | T8 
-G = 18 | H = 8 | F  = 26
+G = 18 | H = 5 | F  = 23
 ================================================================================
 
 
 T1  | T2  |  B 
 T4  | T6  | T3 
 T7  | T5  | T8 
-G = 19 | H = 6 | F  = 25
+G = 19 | H = 4 | F  = 23
 ================================================================================
 
 
 T1  | T2  | T3 
 T4  | T6  |  B 
 T7  | T5  | T8 
-G = 20 | H = 4 | F  = 24
+G = 20 | H = 3 | F  = 23
 ================================================================================
 
 
 T1  | T2  | T3 
 T4  |  B  | T6 
 T7  | T5  | T8 
-G = 21 | H = 4 | F  = 25
+G = 21 | H = 2 | F  = 23
 ================================================================================
 
 
 T1  | T2  | T3 
 T4  | T5  | T6 
 T7  |  B  | T8 
-G = 22 | H = 2 | F  = 24
+G = 22 | H = 1 | F  = 23
 ================================================================================
 
 
@@ -1131,4 +1131,7 @@ G = 23 | H = 0 | F  = 23
 
 
 Actions Taken:  LULDRDLURRDLUURDDLLURUL
-Total Execution Time: 0.5604829788208008 seconds
+Total Execution Time: 0.265826940536499 seconds
+'All Zeroes' expanded all the states expanded by 'Tiles Displaced - no blank'
+'All Zeroes' expanded all the states expanded by 'Manhattan - no blank'
+'Tiles Displaced - no blank' expanded all the states expanded by 'Manhattan - no blank'

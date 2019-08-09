@@ -1,6 +1,7 @@
-Heuristic:, All Zeroes, # Tiles Displaced, Manhattan Distance, 9 Factorial, Tiles Displaced - no blank, Manhattan - no blank
-Total # States Expanded, 114075.0000, 13821.0000, 2535.0000, 103611.0000, 12621.0000, 2279.0000
+Heuristic:, All Zeroes, # Tiles Displaced - counting blank, Manhattan Distance - counting blank, 9 Factorial, Tiles Displaced - no blank, Manhattan - no blank
+Total # States Expanded, 114184.0000, 13773.0000, 1798.0000, 111685.0000, 12661.0000, 1227.0000
 # States in Optimal Path, 24.0000, 24.0000, 24.0000, 24.0000, 24.0000, 24.0000
 Optimal Path Actions, LULDRDLURRDLUURDDLLURUL, LULDRDLURRDLUURDDLLURUL, LULDRDLURRDLUURDDLLURUL, LULDRDLURRDLUURDDLLURUL, LULDRDLURRDLUURDDLLURUL, LULDRDLURRDLUURDDLLURUL
 Optimal Cost, 23.0000, 23.0000, 23.0000, 23.0000, 23.0000, 23.0000
-Execution Time, 4.9625, 1.8856, 0.6257, 4.5228, 1.6501, 0.5605
+Execution Time, 5.4669, 1.7904, 0.4240, 5.1101, 1.7077, 0.2658
+Monotonicity, True, False, False, True, True, True
