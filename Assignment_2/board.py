@@ -13,9 +13,9 @@ optimal_path_length = ['# States in Optimal Path']
 optimal_path = ['Optimal Path Actions']
 optimal_cost = ['Optimal Cost']
 execution_time = ['Execution Time']
-
-all_expanded_states = ['All expanded states']
+all_expanded_states = ['All Expanded States']
 is_monotone = ['Monotonicity']
+
 
 @functools.total_ordering
 class PuzzleBoard:
@@ -291,11 +291,11 @@ def AStar(start, heuristic):
     Function for running the A* algorithm given the heuristics.
     """
     heuristic_options = {0 : (PuzzleBoard.h1, 'All Zeroes'),
-                         1 : (PuzzleBoard.h2, '# Tiles Displaced'),
-                         2 : (PuzzleBoard.h3, 'Manhattan Distance'),
+                         1 : (PuzzleBoard.h2, '# Tiles Displaced - Counting Blank'),
+                         2 : (PuzzleBoard.h3, 'Manhattan Distance - Counting Blank'),
                          3 : (PuzzleBoard.h4, '9 Factorial'),
-                         4 : (PuzzleBoard.h2_no_blank, '# Tiles Displaced - no blank'),
-                         5 : (PuzzleBoard.h3_no_blank, 'Manhattan Distance - no blank'),}
+                         4 : (PuzzleBoard.h2_no_blank, '# Tiles Displaced - No Blank'),
+                         5 : (PuzzleBoard.h3_no_blank, 'Manhattan Distance - No Blank'),}
     PuzzleBoard.final_state = start[3 :]
     PuzzleBoard.final_state_bytes = PuzzleBoard.final_state.tobytes()
     PuzzleBoard.heuristic_function = heuristic_options[heuristic][0]
@@ -351,10 +351,11 @@ def my_plot(values, filename, y_label):
     """
     Function for plotting the number of explored states and time graphs.
     """
-    plt.xticks([1, 2, 3, 4, 5, 6], ['h1: All Zeroes', 'h2: Tiles Displaced',
-                              'h3: Manhattan Distance', 'h4: 9 Factorial',
-                              'h5: Tiles Displaced - no blank',
-                              'h6: Manhattan - no blank'])
+    plt.xticks([1, 2, 3, 4, 5, 6],
+               ['h1: All Zeroes', 'h2: Tiles Displaced - Counting Blank',
+                'h3: Manhattan Distance - Counting Blank', 'h4: 9 Factorial',
+                'h5: Tiles Displaced - No Blank',
+                'h6: Manhattan Distance - No Blank'], rotation = 90)
     plt.plot([1, 2, 3, 4, 5, 6], values[1 :])
     plt.xlabel('Heuristics')
     plt.ylabel(y_label)
@@ -364,14 +365,12 @@ def my_plot(values, filename, y_label):
 
 if __name__ == '__main__':
     if len(sys.argv) == 1:
-        # print('Please provide input file as command-line argument.')
-        # exit()cd
-        fname = './Assignment_2/inp.txt'
+        fname = '../Assignment_2/inp.txt'
     else:
         # Command-line argument: Path to input file.
         fname = sys.argv[1]
 
-    with open(fname,'r') as f:
+    with open(fname, 'r') as f:
         input_lines = f.readlines()
 
     start = numpy.zeros((6, 3), dtype = numpy.int8)
@@ -392,7 +391,7 @@ if __name__ == '__main__':
         AStar(start, i)
 
     with open('Table.csv', 'a') as f:
-        f.write('Heuristic:, All Zeroes, # Tiles Displaced - counting blank, Manhattan Distance - counting blank, 9 Factorial, Tiles Displaced - no blank, Manhattan - no blank\n')
+        f.write('Heuristic:, All Zeroes, # Tiles Displaced - Counting Blank, Manhattan Distance - Counting Blank, 9 Factorial, # Tiles Displaced - No Blank, Manhattan Distance - No Blank\n')
         f.write('%s, %0.4f, %0.4f, %0.4f, %0.4f, %0.4f, %0.4f\n' % (*total_expanded_states, ))
         f.write('%s, %0.4f, %0.4f, %0.4f, %0.4f, %0.4f, %0.4f\n' % (*optimal_path_length, ))
         f.write('%s, %s, %s, %s, %s, %s, %s\n' % (*optimal_path, ))
@@ -403,11 +402,11 @@ if __name__ == '__main__':
     my_plot(total_expanded_states, 'ExploredStates.png', 'Number of Expanded States')
     my_plot(execution_time, 'ExecutionTime.png', 'Time (seconds)')
 
-    # Comparing states explored by better heuristics
+    # Comparing states explored by better heuristics.
     to_compare = [(1, 5), (1, 6), (5, 6)]
-    heuristic_names = 'Heuristic:, All Zeroes, # Tiles Displaced - counting blank, Manhattan Distance - counting blank, 9 Factorial, Tiles Displaced - no blank, Manhattan - no blank'.split(', ')
+    heuristic_names = 'Heuristic:, All Zeroes, # Tiles Displaced - Counting Blank, Manhattan Distance - Counting Blank, 9 Factorial, # Tiles Displaced - No Blank, Manhattan Distance - No Blank'.split(', ')
     for worse_h, better_h in to_compare:
         if not (set(all_expanded_states[better_h]) - set(all_expanded_states[worse_h])):
-            print("'{}' expanded all the states expanded by '{}'".format(heuristic_names[worse_h], heuristic_names[better_h]))
+            print("'{}' expanded all the states expanded by '{}'.".format(heuristic_names[worse_h], heuristic_names[better_h]))
         else:
-            print("'{}' did not expand all the states expanded by '{}'".format(heuristic_names[worse_h], heuristic_names[better_h]))
+            print("'{}' did not expand all the states expanded by '{}'.".format(heuristic_names[worse_h], heuristic_names[better_h]))
