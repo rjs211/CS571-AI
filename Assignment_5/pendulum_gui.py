@@ -7,9 +7,9 @@ from fuzzy_pendulum import FuzzyPendulum
 pygame.init()
 refresh_rate = 1
 bob_size = 15
-pos_theta_eps = [3, 0, 2, 5]
-pos_omega_eps = [4, 0, 4, 8]
-pos_alpha_eps = [1, 0, 2, 4, 3, 5, 6]
+theta_epsilons = [3, 0, 2, 5]
+omega_epsilons = [4, 0, 4, 8]
+alpha_epsilons = [1, 0, 2, 4, 3, 5, 6]
 window = pygame.display.set_mode((800, 800))
 pygame.display.set_caption("Fuzzy Logic Guided Inverted Pendulum")
 screen = pygame.display.get_surface()
@@ -37,12 +37,11 @@ class BobMass(pygame.sprite.Sprite):
 
     def recompute_angle(self):
         """
-        Function for recomputing the angle that the pendulum makes
-        with the vertical.
+        Function for rendering the new angle that the pendulum
+        makes with the vertical.
         """
         t = refresh_rate / 1000
         self.theta, self.omega = self.model.get_new_theta_omega(self.theta, self.omega, t)
-        #print(self.theta, self.omega)
         self.rect = pygame.Rect(pivot[0] - pendulum_length * sin(self.theta),
                                 pivot[1] - pendulum_length * cos(self.theta), 1, 1)
 
@@ -50,10 +49,10 @@ class BobMass(pygame.sprite.Sprite):
         """
         Function for drawing the pendulum in its current state.
         """
-        pygame.draw.circle(screen, (0, 0, 0), pivot, 5, 0)
-        pygame.draw.circle(screen, (0, 0, 0), self.rect.center, bob_size, 0)
-        pygame.draw.aaline(screen, (0, 0, 0), pivot, self.rect.center)
-        pygame.draw.line(screen, (0, 0, 0), (0, pivot[1]), (800, pivot[1]))
+        pygame.draw.circle(screen, (0, 0, 255), pivot, 5, 0)
+        pygame.draw.circle(screen, (0, 0, 255), self.rect.center, bob_size, 0)
+        pygame.draw.aaline(screen, (0, 0, 255), pivot, self.rect.center)
+        pygame.draw.line(screen, (0, 0, 255), (0, pivot[1]), (800, pivot[1]))
 
     def update(self):
         """
@@ -77,7 +76,8 @@ def event_input(events):
             bob.update()
 
 
-physics = FuzzyPendulum(use_gravity = True, pos_theta_eps = pos_theta_eps, pos_omega_eps = pos_omega_eps, pos_alpha_eps = pos_alpha_eps)
+physics = FuzzyPendulum(use_gravity = False, theta_epsilons = theta_epsilons,
+                        omega_epsilons = omega_epsilons, alpha_epsilons = alpha_epsilons)
 bob = BobMass(physics)
 clock = pygame.time.Clock()
 tick = USEREVENT
