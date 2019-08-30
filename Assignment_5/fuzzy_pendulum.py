@@ -13,6 +13,7 @@ class FuzzyPendulum:
         self.theta_omega_to_alpha_map = theta_omega_to_alpha_map[0] + theta_omega_to_alpha_map[1] + \
                                         theta_omega_to_alpha_map[2]
         self.use_gravity = use_gravity
+        self.g = 2
 
     def get_points(self, pos_points):
         points = [-1 * pos_points[0], 0, 0]
@@ -33,12 +34,11 @@ class FuzzyPendulum:
         bottom_right = top_right + top_left - bottom_left
         membership = 0.0
         if bottom_left <= value < top_left:
-            pass
-        # line eqn1
+            membership = (value - bottom_left) / (top_left - bottom_left)
         elif top_left <= value <= top_right:
             membership = 1.0
         elif top_right < value <= bottom_right:
-            pass
+            membership = (bottom_right - value) / (bottom_right - top_right)
         return membership
 
     def get_center_area_trapezium(self, membership, bottom_left, top_left, top_right):
@@ -70,8 +70,8 @@ class FuzzyPendulum:
         return total_alpha_area / total_area
 
     def get_new_theta_omega(self,theta_old, omega_old, time):
-        # todo if theta is <=0 or  >= max then make theta and omega zero
-        # todo if theta not in range membership then give high opposite alpha.  ie NOT FUZZY
+        # Done if theta is <=0 or  >= max then make theta and omega zero
+        # Done if theta not in range membership then give high opposite alpha.  ie NOT FUZZY
         if -0.7 <= theta_old <= 0.7:
             theta_membership = [self.get_membership(theta_old, *self.theta_points[3 * i:3 * i + 3]) for i in range(len(
                 self.theta_points) // 3)]
@@ -90,8 +90,12 @@ class FuzzyPendulum:
         omega_new = omega_old + alpha * time
 
         if self.use_gravity:
-            pass
-            #todo
+            my_ang = math.pi *theta_old*0.5
+            g_component = math.sin(my_ang) * self.g
+
+            theta_disp_grav = 0.5*g_component*time*time
+            theta_new = theta_old + theta_disp
+            omega_new = omega_old + g_component * time
 
         if theta_new <=-1 :
             theta_new = -1
@@ -99,6 +103,10 @@ class FuzzyPendulum:
         elif theta_new >= 1:
             theta_new = 1
             omega_new = 0
+
+
+        return theta_new, omega_new
+
 
 
 
