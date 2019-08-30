@@ -1,14 +1,15 @@
+import sys
 import pygame
 from pygame.locals import USEREVENT, QUIT
 from math import sin, cos, radians
-#from fuzzy_logic import compute_current
+from fuzzy_pendulum import FuzzyPendulum
 
 pygame.init()
 refresh_rate = 1
 bob_size = 15
-#epsilon_theta = [3, 2, 5]
-#epsilon_omega = [2, 2, 4]
-#epsilon_current = [1, 2, 4, 3, 5, 6]
+pos_theta_eps = [3, 0, 2, 5]
+pos_omega_eps = [4, 0, 4, 8]
+pos_alpha_eps = [1, 0, 2, 4, 3, 5, 6]
 window = pygame.display.set_mode((800, 800))
 pygame.display.set_caption("Fuzzy Logic Guided Inverted Pendulum")
 screen = pygame.display.get_surface()
@@ -22,17 +23,16 @@ class BobMass(pygame.sprite.Sprite):
     Class for defining the pendulum object and rendering its motion
     under the given physical conditions.
     """
-    def __init__(self):
+    def __init__(self, model):
         """
         Function for initializing the pendulum class.
         """
         pygame.sprite.Sprite.__init__(self)
-        #self.theta = 1.2
-        #self.dtheta = -3
-
+        self.theta = 0.8
+        self.omega = -3
+        self.model = model
         self.rect = pygame.Rect(int(pivot[0] - pendulum_length * cos(self.theta)),
-                                int(pivot[1] - pendulum_length * sin(self.theta)),
-                                1, 1)
+                                int(pivot[1] - pendulum_length * sin(self.theta)), 1, 1)
         self.draw()
 
     def recompute_angle(self):
@@ -40,13 +40,9 @@ class BobMass(pygame.sprite.Sprite):
         Function for recomputing the angle that the pendulum makes
         with the vertical.
         """
-        current = compute_current(self.theta, self.dtheta, epsilon_theta,
-                                  epsilon_omega, epsilon_current)
         t = refresh_rate / 1000
-        #new_theta = self.theta + self.dtheta * t + current * 0.5 * t * t
-        #new_omega = self.dtheta + current * t
-        self.theta, self.dtheta = new_theta, new_omega
-        print(new_theta, new_omega)
+        self.theta, self.omega = self.model.get_new_theta_omega(self.theta, self.omega, t)
+        #print(self.theta, self.omega)
         self.rect = pygame.Rect(pivot[0] - pendulum_length * sin(self.theta),
                                 pivot[1] - pendulum_length * cos(self.theta), 1, 1)
 
@@ -69,12 +65,6 @@ class BobMass(pygame.sprite.Sprite):
         self.draw()
 
 
-bob = BobMass()
-clock = pygame.time.Clock()
-tick = USEREVENT
-pygame.time.set_timer(tick, refresh_rate)
-
-
 def event_input(events):
     """
     Function for registering user events in the event queue
@@ -85,6 +75,13 @@ def event_input(events):
             sys.exit(0)
         elif event.type == tick:
             bob.update()
+
+
+physics = FuzzyPendulum(use_gravity = True, pos_theta_eps = pos_theta_eps, pos_omega_eps = pos_omega_eps, pos_alpha_eps = pos_alpha_eps)
+bob = BobMass(physics)
+clock = pygame.time.Clock()
+tick = USEREVENT
+pygame.time.set_timer(tick, refresh_rate)
 
 
 while True:
